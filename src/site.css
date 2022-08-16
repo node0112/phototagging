@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Edu+VIC+WA+NT+Beginner:wght@600&family=Lato&family=Open+Sans&family=Roboto&family=Signika+Negative&display=swap');
+
+
+/*-------Default CLasses--------*/
+.transition{
+    transition: all 0.3s;
+}
+a{
+    color: none;
+    text-decoration: none;
+}
+
+.image-container{
+    overflow: scroll;
+    pointer-events: none;
+    cursor: text;
+}
+
+
+.char-selector{
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border: 3px solid red;
+}
+.background-image{
+    width: 1440px;
+    height: 948px;
+}
+
+.hide{
+    visibility: hidden !important;
+}
+
+
+/*---Header---*/
+.header{
+    display: flex;
+    justify-content: space-evenly;
+    height: 70px;
+    width: 100%;
+    align-items: center;
+}
+.header-link{
+    color: red;
+    font-size: 1.8em;
+    font-family: 'Roboto',sans-serif;
+    border-bottom: 4px solid white;
+    cursor: pointer;
+}
+.header-link:hover{
+    border-bottom: 4px solid yellow;
+}
+.logo{
+    font-family: 'Signika negative',sans-serif;
+    font-size: 3em;
+    color: white;
+    font-weight: bold;
+    width: 30vw;
+    height: 100%;
+    color: rgb(147, 218, 241);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.header-links{
+    width: 70%;
+    display: flex;
+    justify-content: space-evenly;
+}
+/*--------Animations and Other Classes not related to main------------*/
+#loading {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #000000;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+  }
+  .loading-screen{
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+  }
+  .loading-text{
+    font-family: 'lato';
+    font-size: 2em;
+  }
+  
+  @keyframes spin {
+    to { -webkit-transform: rotate(360deg); }
+  }
+  @-webkit-keyframes spin {
+    to { -webkit-transform: rotate(360deg); }
+  }
+  
