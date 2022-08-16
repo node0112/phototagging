@@ -3,7 +3,7 @@
 
 /*-------Default CLasses--------*/
 .transition{
-    transition: all 0.3s;
+    transition: all 0.3s ease-in-out;
 }
 a{
     color: none;
@@ -15,13 +15,22 @@ a{
     pointer-events: none;
     cursor: text;
 }
+.pointer{
+    cursor: pointer;
+}
+.flex{
+    display: flex;
+}
+.column{
+    flex-direction: column;
+}
 
 
 .char-selector{
     position: absolute;
     width: 60px;
     height: 60px;
-    border: 3px solid red;
+    border: 4px solid red;
 }
 .background-image{
     width: 1440px;
@@ -67,6 +76,75 @@ a{
     width: 70%;
     display: flex;
     justify-content: space-evenly;
+    align-items: center;
+}
+.profile{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.profile-pic{
+    height: 40%;
+    width: 40%;
+    border-radius: 50%;
+}
+.profile-pic:hover{
+    box-shadow: 0 0 10px black;
+}
+.user-menu{
+    background-color: white;
+    position: absolute;
+    top: 70px;
+    right: 10%;
+    padding: 5px;
+    height: 40px;
+    visibility: hidden;
+    opacity: 0;
+}
+.profile-pic:hover ~ .user-menu,.user-menu:hover{
+    visibility: visible;
+    opacity: 1;
+    box-shadow: 10px 10px 10px black;
+}
+
+/*--------character-box--------*/
+
+.side-box{
+    position: absolute;
+    top: 200px;
+    align-items: center;
+}
+.character-box{
+    width: 300px;
+    height: 400px;
+    background-color: white;
+    padding: 5px;
+    justify-content: space-evenly;
+    overflow: scroll;
+    padding-top: 2em;
+}
+.character-card{
+    align-items: center;
+    border-bottom: 2px solid black;
+    gap: 20px;
+}
+.character-image{
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+.character-text{
+    font-family: 'open sans';
+    font-size: 2em;
+}
+.character-card-opener{
+    position: absolute;
+    height: 100px;
+    width: 1em;
+    left: 300px;
+    background-color: yellowgreen;
+    align-items: center;
+    transition: all 0.5s ease-in-out;
 }
 /*--------Animations and Other Classes not related to main------------*/
 #loading {
