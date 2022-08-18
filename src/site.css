@@ -9,7 +9,12 @@ a{
     color: none;
     text-decoration: none;
 }
-
+.green{
+    color: yellowgreen;
+}
+.red{
+    color: #ff6961;
+}
 .image-container{
     overflow: scroll;
     pointer-events: none;
@@ -120,8 +125,8 @@ a{
     background-color: white;
     padding: 5px;
     justify-content: space-evenly;
-    overflow: scroll;
     padding-top: 2em;
+    overflow-y: scroll;
 }
 .character-card{
     align-items: center;
@@ -145,6 +150,9 @@ a{
     background-color: yellowgreen;
     align-items: center;
     transition: all 0.5s ease-in-out;
+}
+.found-text{
+    font-size: 0.5em;
 }
 /*--------Animations and Other Classes not related to main------------*/
 #loading {
