@@ -14,6 +14,7 @@ import waldo from './components/images/waldo.webp'
 import wenda from './components/images/wenda.webp'
 import wizard from './components/images/wizard.webp'
 import Header from './components/Header';
+import Sidebox from './components/Sidebox';
 
 
 
@@ -63,7 +64,7 @@ function App() {
     selectorRendered=false
   }
 
-  let status=true
+  const [status,setStatus]=useState(true)
   let opener='shady'
   let box=''
 
@@ -73,24 +74,22 @@ function App() {
   const [wendaFound,setWendaFound]=useState(false)
   const [odlawFound,setOdlawFound]=useState(false)
 
-  const handleSideBox = ()=>{
+
+  useEffect(()=>{ //sets sidebox variables everytime page is loaded
     opener=document.querySelector('.character-card-opener')
     box=document.querySelector('.side-box')
-  }
+  })
+
   function openBox(){
-    console.log(opener)
     box.style.left='-300px'
     opener.style.transform='rotate(180deg)'
-    status=false
+    setStatus(false)
   }
   function closeBox(){
     box.style.left='0px'
     opener.style.transform='rotate(-0deg)'
-    status=true
+    setStatus(true)
   }
-  setTimeout(() => {
-    setWaldoFound(true)
-  }, 5000);
 
 
 
@@ -124,32 +123,11 @@ function App() {
 
   return (
     <div>
-      <Header user={user}/>
+      <Header user={user} signOut={signOutUser}/>
       <div className='char-selector hide'></div>
       <div className='image-container'></div>
       <img src={backgroundImage} className="background-image"/>
-      <div className='side-box flex transition' style={{left: '0px'}}>
-        <div className='character-box flex column transition'>
-          <div style={{fontFamily: 'open sans',fontSize: '1.5em',marginBottom: '20px'}}>Characters To Find:</div>
-          <div className='character-card flex'>
-            <img className='character-image' src={waldo}/>
-            <div className='character-text flex column'>Waldo <div className={waldoFound ? 'found-text green':'found-text red'}>{waldoFound ? 'Found': 'Not Found'}</div></div>
-          </div>
-          <div className='character-card flex'>
-            <img className='character-image' src={wenda}/>
-            <div className='character-text flex column'>Wenda <div className={wendaFound ? 'found-text green':'found-text red'}>{wendaFound ? 'Found': 'Not Found'}</div><button onClick={()=>{setWaldoFound(false)}}>oduf</button></div>
-          </div>
-          <div className='character-card flex'>
-            <img className='character-image' src={wizard}/>
-            <div className='character-text flex column'>Wizard <div className={wizardFound ? 'found-text green':'found-text red'}>{wizardFound ? 'Found': 'Not Found'}</div></div>
-          </div>
-          <div className='character-card flex'>
-            <img className='character-image' src={odlaw}/>
-            <div className='character-text flex column'>Odlaw <div className={odlawFound ? 'found-text green':'found-text red'}>{odlawFound ? 'Found': 'Not Found'}</div></div>
-          </div>
-        </div>
-        <div className='character-card-opener flex pointer' onLoad={handleSideBox} onClick={()=>{status ? openBox() : closeBox()}}>◀</div>
-      </div>
+      <Sidebox waldoFound={waldoFound} wizardFound={wizardFound} odlawFound={odlawFound} wendaFound={wendaFound} status={status} waldo={waldo} wenda={wenda} wizard={wizard } odlaw={odlaw} openBox={openBox} closeBox={closeBox} setWaldoFound={setWaldoFound} />
     </div>
   );
 }

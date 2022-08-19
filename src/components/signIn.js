@@ -15,7 +15,7 @@ function SignIn() {
     }
   return (
     <div>
-        <button onClick={signIn}>Sign IN</button>
+        <button className='sign-in transition pointer' onClick={signIn}>Sign In</button>
     </div>
   )
 }

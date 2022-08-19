@@ -99,12 +99,38 @@ a{
 .user-menu{
     background-color: white;
     position: absolute;
+    gap: 5px;
     top: 70px;
     right: 10%;
     padding: 5px;
-    height: 40px;
     visibility: hidden;
     opacity: 0;
+}
+.menu-item{
+    font-size: 1.2em;
+    background-color: #000000;
+    border: none;
+    color: whitesmoke;
+    font-family: 'roboto', sans-serif;
+    border-radius: 10px;
+}
+.sign-in{
+    font-size: 1.2em;
+    background-color: white;
+    border: none;
+    color: black;
+    font-family: 'roboto', sans-serif;
+    border-radius: 20px;
+    padding: 10px;
+    width: 120px;
+}
+.sign-in:hover{
+    color: black;
+    background-color: yellowgreen;
+}
+.menu-item:hover{
+    color: black;
+    background-color: #ff6961;
 }
 .profile-pic:hover ~ .user-menu,.user-menu:hover{
     visibility: visible;
