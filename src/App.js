@@ -4,6 +4,14 @@ import './reset.css'
 import './site.css'
 import SignIn from './components/signIn';
 import {signOut, getAuth} from 'firebase/auth'
+import firebase from "firebase/compat/app";
+import 'firebase/compat/firestore'
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+} from 'firebase/firestore';
 import { auth } from './fireabse'
 import React, { useEffect, useState } from 'react';
 import LoadingScreen from './components/LoadingScreen'
@@ -22,11 +30,14 @@ import Sidebox from './components/Sidebox';
 
 function App() {
 
-  
-
-  let posX,posY,leftPos,topPos,modalX,modalY
-
+  let posX,posY,leftPos,topPos,modalX,modalY;
   let selectorRendered=false
+
+  const [status,setStatus]=useState(true)
+  const [highScore,setHighScore]=useState(0)
+  const updateHighScore=()=>setHighScore((currentScore)=>currentScore+1)
+  let opener='shady'
+  let box=''
 
   function printMousePos(event) {
     let header=document.querySelector('.header')
@@ -37,8 +48,8 @@ function App() {
       posY=event.clientY + container.scrollTop - rect.top;
       leftPos=posX-30
       topPos=posY-30
-      modalX=leftPos+60 //places it right beside the selection square
-      modalY=posY
+      modalX=leftPos+70 //places it right beside the selection square
+      modalY=posY-60
       if(topPos>headerHieght-10){ //prevents square from rendering on header
         drawSquare()
         selectorRendered=true
@@ -50,30 +61,66 @@ function App() {
   }
   
   const container = document.querySelector('body')
-  //document.addEventListener('click', printMousePos)
+  document.addEventListener('click', (event)=>{
+    selectorRendered ? removeSquare() : printMousePos(event)
+  })
   
+  function checkCharacterSelection(setCharacter){
+    function checkPointPos(){
+      removeSquare()
+      let left=553,right=613,top=631,bottom=691
+      console.log(posX,posY)
+      console.log(left,right,top,bottom)
+      if(posX>left && posX<right && posY>top && posY<bottom){
+        return true
+      }
+      else{
+        return false
+      }
+    }
+    if(checkPointPos() === true ){
+      setCharacter(true)
+      updateHighScore(highScore+1)
+      updateScore()
+      //setwhatever character is chosen to true and update it in cloud as well as highscore
+    }
+    else if(checkPointPos() === false){
+      let errorModal=document.querySelector('.error-modal')
+      errorModal.classList.remove('hide')
+      errorModal.style.opacity='1'
+      setTimeout(() => {
+        errorModal.style.opacity='0'
+      }, 5000);
+      setTimeout(() => {
+        errorModal.classList.add('hide')
+      }, 6000);
+    }
+  }
+
   function drawSquare(){
     //change position of current square to place where user has clicked
     let square=document.querySelector(".char-selector")
+    let menu=document.querySelector('.selection-menu')
     square.classList.remove('hide')
+    menu.classList.remove('hide')
     square.style.top=topPos+'px'
     square.style.left=leftPos+'px'
+    menu.style.left=modalX+'px'
+    menu.style.top=modalY+'px'
   }
   function removeSquare(){
     document.querySelector(".char-selector").classList.add('hide')
+    let menu=document.querySelector('.selection-menu')
+    menu.classList.add('hide')
     selectorRendered=false
   }
 
-  const [status,setStatus]=useState(true)
-  let opener='shady'
-  let box=''
 
   //define states-------->
   const [waldoFound,setWaldoFound]=useState(false)
   const [wizardFound,setWizardFound]=useState(false)
   const [wendaFound,setWendaFound]=useState(false)
   const [odlawFound,setOdlawFound]=useState(false)
-
 
   useEffect(()=>{ //sets sidebox variables everytime page is loaded
     opener=document.querySelector('.character-card-opener')
@@ -99,6 +146,7 @@ function App() {
   const [user,setUser]=useState(()=>auth.currentUser)
   const [initializing,setInitializing]=useState(true)
 
+
   useEffect(()=>{
     const unsubscribe= auth.onAuthStateChanged(user => {
       if(user){
@@ -118,13 +166,70 @@ function App() {
     // Sign out of Firebase.
     signOut(getAuth());
   }
+  async function updateScore(){
+    const db= await firebase.firestore().collection(user.displayName).get()
+    let data=db.docs.map(doc => doc.data())
+    let id=db.docs.map(doc => doc.id)
+    if(data.length === 0){
+      try {
+        await addDoc(collection(getFirestore(), user.displayName), { //creates document if it doesnt exist
+          waldoFound: waldoFound,
+          wendaFound: wendaFound,
+          odlawFound: odlawFound,
+          wizardFound: wizardFound,
+          highScore: highScore
+        }).then(getData())
+      }
+      catch(error) {
+        console.error('Error writing new message to Firebase Database', error);
+      }
+    }
+    else if(data.length !== 0){
+      console.log('updates')
+      firebase.firestore().collection(user.displayName).doc(id[0]).update({ //updates scores if the document exists
+        waldoFound: waldoFound,
+        wendaFound: wendaFound,
+        odlawFound: odlawFound,
+        wizardFound: wizardFound,
+        highScore: highScore
+      }).then(getData())
+    }
+  }
+  async function getData(){
+    const db= await firebase.firestore().collection(user.displayName).get()
+    let data=db.docs.map(doc => doc.data())
+    if(data.length !== 0){
+      setWaldoFound(data[0].waldoFound)
+      setWendaFound(data[0].wendaFound)
+      setOdlawFound(data[0].odlawFound)
+      setWizardFound(data[0].wizardFound)
+      setHighScore(data[0].highScore)
+    }
+  }
+
+  useEffect(()=>{ //retrieves data if user is logged in
+    if(user){
+      getData()
+      updateScore()
+     }   
+  })
+ 
+
 
   if(initializing) return <LoadingScreen loadingText={"Fetching Data From Server "}/>
 
   return (
     <div>
       <Header user={user} signOut={signOutUser}/>
-      <div className='char-selector hide'></div>
+      <div className='error-modal flex hide'><span class="material-icons" style={{color:'brown', fontSize: '1.2em', borderRight: '2px solid brown',marginRight: '5px'}}>close</span> Wrong Character</div>
+      <div className='char-selector hide'>
+      </div>
+      <div className='selection-menu hide'>
+          <div className='selection-text transition pointer'>Waldo</div>
+          <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(setOdlawFound)}}>Odlaw</div>
+          <div className='selection-text transition pointer'>Wenda</div>
+          <div className='selection-text transition pointer'>Wizard</div>
+        </div>
       <div className='image-container'></div>
       <img src={backgroundImage} className="background-image"/>
       <Sidebox waldoFound={waldoFound} wizardFound={wizardFound} odlawFound={odlawFound} wendaFound={wendaFound} status={status} waldo={waldo} wenda={wenda} wizard={wizard } odlaw={odlaw} openBox={openBox} closeBox={closeBox} setWaldoFound={setWaldoFound} />

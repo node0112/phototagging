@@ -37,13 +37,26 @@ a{
     height: 60px;
     border: 4px solid red;
 }
+.selection-menu{
+    background-color: black;
+    font-size: 1.3em;
+    font-family: 'open sans',sans-serif;
+    color: red;
+    position: absolute;
+    padding: 10px;
+}
+.selection-text:hover{
+    color: black;
+    padding: 5px;
+    background-color: #ff6961;
+}
 .background-image{
     width: 1440px;
     height: 948px;
 }
 
 .hide{
-    visibility: hidden !important;
+    display: none !important;
 }
 
 
@@ -137,7 +150,18 @@ a{
     opacity: 1;
     box-shadow: 10px 10px 10px black;
 }
-
+.error-modal{
+    position: absolute;
+    background-color: #ff6961;
+    font-size: 2em;
+    padding: 10px;
+    font-family: 'roboto',sans-serif;
+    align-items: center;
+    color: brown;
+    top: 15%;
+    left: 43%;
+    transition: all 1s;
+}
 /*--------character-box--------*/
 
 .side-box{
