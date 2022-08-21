@@ -46,6 +46,7 @@ function App() {
     var rect = container.getBoundingClientRect();
       posX=event.clientX + container.scrollLeft - rect.left;
       posY=event.clientY + container.scrollTop - rect.top;
+      console.log(posX,posX+60,posY,posY+60)
       leftPos=posX-30
       topPos=posY-30
       modalX=leftPos+70 //places it right beside the selection square
@@ -65,10 +66,9 @@ function App() {
     selectorRendered ? removeSquare() : printMousePos(event)
   })
   
-  function checkCharacterSelection(setCharacter){
+  function checkCharacterSelection(setCharacter,left,right,top,bottom){
     function checkPointPos(){
       removeSquare()
-      let left=553,right=613,top=631,bottom=691
       console.log(posX,posY)
       console.log(left,right,top,bottom)
       if(posX>left && posX<right && posY>top && posY<bottom){
@@ -192,7 +192,7 @@ function App() {
         odlawFound: odlawFound,
         wizardFound: wizardFound,
         highScore: highScore
-      }).then(getData())
+      }).then(getData)
     }
   }
   async function getData(){
@@ -209,10 +209,10 @@ function App() {
 
   useEffect(()=>{ //retrieves data if user is logged in
     if(user){
+      console.log('oh no')
       getData()
-      updateScore()
      }   
-  })
+  },[])
  
 
 
@@ -225,10 +225,10 @@ function App() {
       <div className='char-selector hide'>
       </div>
       <div className='selection-menu hide'>
-          <div className='selection-text transition pointer'>Waldo</div>
-          <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(setOdlawFound)}}>Odlaw</div>
-          <div className='selection-text transition pointer'>Wenda</div>
-          <div className='selection-text transition pointer'>Wizard</div>
+          {waldoFound ? null : <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(setWaldoFound,553,613,631,691)}}>Waldo</div> }
+          {odlawFound ? null : <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(setOdlawFound,102,162,723,783)}}>Odlaw</div> }
+          {wendaFound ? null : <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(setWendaFound,425,485,562,622)}} >Wenda</div> }
+          {wizardFound ? null : <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(setWizardFound,1125,1185,618,678)}}>Wizard</div> }
         </div>
       <div className='image-container'></div>
       <img src={backgroundImage} className="background-image"/>
