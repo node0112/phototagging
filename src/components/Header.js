@@ -1,7 +1,7 @@
 import React from 'react'
 import SignIn from './signIn'
 
-function Header({user,signOut}) {
+function Header({user,signOut,resetData}) {
   return (
     <div className="header" >
         <div className='logo'>Where's Waldo?</div>
@@ -13,7 +13,7 @@ function Header({user,signOut}) {
             <div className={user ? 'green' : 'red'} style={{fontFamily: 'open sans,sans-serif'}}>{user ? 'Signed In' : 'Not Signed In'}</div>
             <div style={{fontFamily: 'open sans,sans-serif'}}>{user ? 'Saving Scores In Cloud' : 'Not Saving Scores In Cloud'}</div>
             <button className='menu-item transition pointer' onClick={()=>{signOut()}}>Sign Out</button>
-            <button className='menu-item transition'></button>
+            <button className='menu-item transition pointer' onClick={resetData}>Reset Characters</button>
         </div>
         </div> : <SignIn />}</li>
         </ul>

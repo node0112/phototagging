@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Sidebox=React.memo(({wendaFound, waldoFound, wizardFound, odlawFound, status, odlaw, wenda, waldo, wizard, openBox, closeBox, setWaldoFound})=>{
+const Sidebox=React.memo(({wendaFound, waldoFound, wizardFound, odlawFound, status, odlaw, wenda, waldo, wizard, openBox, closeBox})=>{
   return (
     <div className='side-box flex transition' style={{left: '0px'}}>
         <div className='character-box flex column transition'>
@@ -11,7 +11,7 @@ const Sidebox=React.memo(({wendaFound, waldoFound, wizardFound, odlawFound, stat
           </div>
           <div className='character-card flex'>
             <img className='character-image' src={wenda}/>
-            <div className='character-text flex column'>Wenda <div className={wendaFound ? 'found-text green':'found-text red'}>{wendaFound ? 'Found': 'Not Found'}</div><button onClick={()=>{setWaldoFound(false)}}>oduf</button></div>
+            <div className='character-text flex column'>Wenda <div className={wendaFound ? 'found-text green':'found-text red'}>{wendaFound ? 'Found': 'Not Found'}</div></div>
           </div>
           <div className='character-card flex'>
             <img className='character-image' src={wizard}/>

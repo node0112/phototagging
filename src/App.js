@@ -13,7 +13,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { auth } from './fireabse'
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import LoadingScreen from './components/LoadingScreen'
 
 import backgroundImage from './components/images/img1.jpg'
@@ -33,6 +33,13 @@ function App() {
   let posX,posY,leftPos,topPos,modalX,modalY;
   let selectorRendered=false
 
+  //define states-------->
+  const [waldoFound,setWaldoFound]=useState({found : false})
+  const [wizardFound,setWizardFound]=useState({found : false})
+  const [wendaFound,setWendaFound]=useState({found : false})
+  const [odlawFound,setOdlawFound]=useState({found : false})
+
+
   const [status,setStatus]=useState(true)
   const [highScore,setHighScore]=useState(0)
   const updateHighScore=()=>setHighScore((currentScore)=>currentScore+1)
@@ -46,7 +53,6 @@ function App() {
     var rect = container.getBoundingClientRect();
       posX=event.clientX + container.scrollLeft - rect.left;
       posY=event.clientY + container.scrollTop - rect.top;
-      console.log(posX,posX+60,posY,posY+60)
       leftPos=posX-30
       topPos=posY-30
       modalX=leftPos+70 //places it right beside the selection square
@@ -69,22 +75,21 @@ function App() {
   function checkCharacterSelection(setCharacter,left,right,top,bottom){
     function checkPointPos(){
       removeSquare()
-      console.log(posX,posY)
-      console.log(left,right,top,bottom)
-      if(posX>left && posX<right && posY>top && posY<bottom){
+      if(posX>=left && posX<=right && posY>=top && posY<=bottom){
         return true
       }
       else{
         return false
       }
     }
-    if(checkPointPos() === true ){
-      setCharacter(true)
+    if(checkPointPos() === true ){//setwhatever character is chosen to true and update it in cloud as well as highscore
+      setCharacter.found=true
       updateHighScore(highScore+1)
-      updateScore()
-      //setwhatever character is chosen to true and update it in cloud as well as highscore
+      if(user){
+        updateScore()
+      }
     }
-    else if(checkPointPos() === false){
+    else if(checkPointPos() === false){ //shows error on top of page
       let errorModal=document.querySelector('.error-modal')
       errorModal.classList.remove('hide')
       errorModal.style.opacity='1'
@@ -116,11 +121,6 @@ function App() {
   }
 
 
-  //define states-------->
-  const [waldoFound,setWaldoFound]=useState(false)
-  const [wizardFound,setWizardFound]=useState(false)
-  const [wendaFound,setWendaFound]=useState(false)
-  const [odlawFound,setOdlawFound]=useState(false)
 
   useEffect(()=>{ //sets sidebox variables everytime page is loaded
     opener=document.querySelector('.character-card-opener')
@@ -173,66 +173,92 @@ function App() {
     if(data.length === 0){
       try {
         await addDoc(collection(getFirestore(), user.displayName), { //creates document if it doesnt exist
-          waldoFound: waldoFound,
-          wendaFound: wendaFound,
-          odlawFound: odlawFound,
-          wizardFound: wizardFound,
+          waldoFound: waldoFound.found,
+          wendaFound: wendaFound.found,
+          odlawFound: odlawFound.found,
+          wizardFound: wizardFound.found,
           highScore: highScore
-        }).then(getData())
+        })
       }
       catch(error) {
         console.error('Error writing new message to Firebase Database', error);
       }
     }
     else if(data.length !== 0){
-      console.log('updates')
-      firebase.firestore().collection(user.displayName).doc(id[0]).update({ //updates scores if the document exists
-        waldoFound: waldoFound,
-        wendaFound: wendaFound,
-        odlawFound: odlawFound,
-        wizardFound: wizardFound,
-        highScore: highScore
-      }).then(getData)
+      firebase.firestore().collection(user.displayName).doc(id[0]).update("waldoFound",waldoFound.found)
+      firebase.firestore().collection(user.displayName).doc(id[0]).update("odlawFound",odlawFound.found)
+      firebase.firestore().collection(user.displayName).doc(id[0]).update("wizardFound",wizardFound.found)
+      firebase.firestore().collection(user.displayName).doc(id[0]).update("wendaFound",wendaFound.found)
+      
     }
   }
+  async function resetData(){
+    const db= await firebase.firestore().collection(user.displayName).get()
+    let data=db.docs.map(doc => doc.data())
+    let id=db.docs.map(doc => doc.id)
+    if(data.length !== 0){
+      firebase.firestore().collection(user.displayName).doc(id[0]).update("waldoFound",false)
+      firebase.firestore().collection(user.displayName).doc(id[0]).update("odlawFound",false)
+      firebase.firestore().collection(user.displayName).doc(id[0]).update("wizardFound",false)
+      firebase.firestore().collection(user.displayName).doc(id[0]).update("wendaFound",false)
+      waldoFound.found=false
+      odlawFound.found=false
+      wendaFound.found=false
+      wizardFound.found=false
+    }
+  }
+  const [dataRaceieved,setDataRaceieved] = useState(false)
   async function getData(){
     const db= await firebase.firestore().collection(user.displayName).get()
     let data=db.docs.map(doc => doc.data())
     if(data.length !== 0){
-      setWaldoFound(data[0].waldoFound)
-      setWendaFound(data[0].wendaFound)
-      setOdlawFound(data[0].odlawFound)
-      setWizardFound(data[0].wizardFound)
+      waldoFound.found= data[0].waldoFound
+      wendaFound.found= data[0].wendaFound
+      odlawFound.found= data[0].odlawFound
+      wizardFound.found= data[0].wizardFound
       setHighScore(data[0].highScore)
+    }
+    if(db){
+      setDataRaceieved(true)
     }
   }
 
+
+  
+  
+
+  let fetchedInitData=false
+
   useEffect(()=>{ //retrieves data if user is logged in
-    if(user){
-      console.log('oh no')
+    if(user && fetchedInitData === false && dataRaceieved === false){
       getData()
+      fetchedInitData=true
+      console.log('logged in')
      }   
-  },[])
+  })
  
 
 
-  if(initializing) return <LoadingScreen loadingText={"Fetching Data From Server "}/>
+  if(initializing) return <LoadingScreen loadingText={"Fetching User Data From Server "}/>
+  if(dataRaceieved === false){
+    return(<LoadingScreen loadingText={"Fetching Character Data From Server "}/>)
+  }
 
   return (
     <div>
-      <Header user={user} signOut={signOutUser}/>
+      <Header user={user} signOut={signOutUser} resetData={resetData}/>
       <div className='error-modal flex hide'><span class="material-icons" style={{color:'brown', fontSize: '1.2em', borderRight: '2px solid brown',marginRight: '5px'}}>close</span> Wrong Character</div>
       <div className='char-selector hide'>
       </div>
       <div className='selection-menu hide'>
-          {waldoFound ? null : <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(setWaldoFound,553,613,631,691)}}>Waldo</div> }
-          {odlawFound ? null : <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(setOdlawFound,102,162,723,783)}}>Odlaw</div> }
-          {wendaFound ? null : <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(setWendaFound,425,485,562,622)}} >Wenda</div> }
-          {wizardFound ? null : <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(setWizardFound,1125,1185,618,678)}}>Wizard</div> }
+          {waldoFound.found ? null : <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(waldoFound,553,613,631,691)}}>Waldo</div> }
+          {odlawFound.found ? null : <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(odlawFound,102,162,723,783)}}>Odlaw</div> }
+          {wendaFound.found ? null : <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(wendaFound,395,455,531,591)}} >Wenda</div> }
+          {wizardFound.found ? null : <div className='selection-text transition pointer' onClick={()=>{checkCharacterSelection(wizardFound,1125,1185,558,678)}}>Wizard</div> }
         </div>
       <div className='image-container'></div>
       <img src={backgroundImage} className="background-image"/>
-      <Sidebox waldoFound={waldoFound} wizardFound={wizardFound} odlawFound={odlawFound} wendaFound={wendaFound} status={status} waldo={waldo} wenda={wenda} wizard={wizard } odlaw={odlaw} openBox={openBox} closeBox={closeBox} setWaldoFound={setWaldoFound} />
+      <Sidebox waldoFound={waldoFound.found} wizardFound={wizardFound.found} odlawFound={odlawFound.found} wendaFound={wendaFound.found} status={status} waldo={waldo} wenda={wenda} wizard={wizard } odlaw={odlaw} openBox={openBox} closeBox={closeBox}  />
     </div>
   );
 }
