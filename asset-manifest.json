@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/phototagging/static/css/main.9c30a346.css",
+    "main.js": "/phototagging/static/js/main.f9c1e4d1.js",
+    "static/media/img1.jpg": "/phototagging/static/media/img1.e1b616592899fcd93699.jpg",
+    "static/media/odlaw.webp": "/phototagging/static/media/odlaw.673d74bd810530a6144d.webp",
+    "static/media/wizard.webp": "/phototagging/static/media/wizard.aadecda729652fc8ee78.webp",
+    "static/media/wenda.webp": "/phototagging/static/media/wenda.bba976d6796468024fca.webp",
+    "static/media/waldo.webp": "/phototagging/static/media/waldo.e249b92df389927f2dec.webp",
+    "static/media/logo.svg": "/phototagging/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/phototagging/index.html",
+    "main.9c30a346.css.map": "/phototagging/static/css/main.9c30a346.css.map",
+    "main.f9c1e4d1.js.map": "/phototagging/static/js/main.f9c1e4d1.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9c30a346.css",
+    "static/js/main.f9c1e4d1.js"
+  ]
+}
